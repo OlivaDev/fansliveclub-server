@@ -18,19 +18,24 @@ const updatePeriodGains = onDocumentCreated("wallets/{walletId}/transactions/{tr
         let currentGains = await admin.firestore().collection("wallets").doc(transaction.toWallet).get()
         currentGains = currentGains.data().periodGains || 0
 
-        let promises = await Promise.all([
-            admin.firestore().collection("wallets").doc(transaction.toWallet).update({
-                periodGains: FieldValue.increment(transaction.amount)
-            }),
 
-            admin.firestore().collection("users").doc(transaction.toUser).get(),
+        let user = await admin.firestore().collection("users").doc(transaction.toUser).get()
+        user = user.data()
+        
+        //Obtener nivel actual y siguiente nivel del usuario
+
+        let promises2 = await Promise.all([
+            admin.firestore().collection("levels").doc(user.streamerLevel).get(),
+            admin.firestore().collection("levels").doc(user.nextStreamerLevel).get()
         ])
 
-        let user = promises[1].data()
+        let currentLevel = promises2[0].data()
+        let nextLevel = promises2[1].data()
+        
+        await admin.firestore().collection("wallets").doc(transaction.toWallet).update({
+            periodGains: FieldValue.increment((transaction.amount * currentLevel.percentage) / 100)
+        })
 
-        //Obtener siguiente nivel del usuario
-        let nextLevel = await admin.firestore().collection("levels").doc(user.nextStreamerLevel).get()
-        nextLevel = nextLevel.data()
         /*
             Si las ganancias del periodo actual son mayores o iguales al monto requerido para el
             siguiente nivel, se reinician las ganancias del periodo y se le asigna el siguiente nivel si existe
@@ -43,7 +48,7 @@ const updatePeriodGains = onDocumentCreated("wallets/{walletId}/transactions/{tr
 
                 let periodEnd = new Date()
 
-                if(nextPeriod){
+                if (nextPeriod) {
                     periodEnd.setMonth(periodEnd.getMonth() + nextPeriod.monthsLimit)
                     periodEnd = Timestamp.fromDate(periodEnd)
                 }
@@ -52,7 +57,7 @@ const updatePeriodGains = onDocumentCreated("wallets/{walletId}/transactions/{tr
 
                 await Promise.all([
                     admin.firestore().collection("wallets").doc(transaction.toWallet).update({
-                        periodGains: actualGains
+                        periodGains: 0
                     }),
 
                     admin.firestore().collection("users").doc(user.id).update({
