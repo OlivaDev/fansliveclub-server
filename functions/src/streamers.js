@@ -31,9 +31,11 @@ const updatePeriodGains = onDocumentCreated("wallets/{walletId}/transactions/{tr
 
         let currentLevel = promises2[0].data()
         let nextLevel = promises2[1].data()
-        
+        let amount = (transaction.amount * currentLevel.percentage) / 100
+
         await admin.firestore().collection("wallets").doc(transaction.toWallet).update({
-            periodGains: FieldValue.increment((transaction.amount * currentLevel.percentage) / 100)
+            periodGains: FieldValue.increment(amount),
+            avaliable: FieldValue.increment(amount)
         })
 
         /*

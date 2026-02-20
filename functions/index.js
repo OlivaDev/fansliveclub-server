@@ -4,6 +4,7 @@ const cors = require("cors");
 const admin = require("firebase-admin");
 const { onDocumentCreated } = require("firebase-functions/firestore");
 const { updatePeriodGains } = require("./src/streamers");
+const { createUserWallet } = require("./src/wallets");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -73,4 +74,6 @@ exports.mainNotificator = onDocumentCreated("notifications/{notification}", asyn
 
 //STREAMERS//////////////////////////////////////////////////////////////////////
 exports.updatePeriodGains = updatePeriodGains
+//WALLETS///////////////////////////////////////////////////////////////////////
+exports.createUserWallet = createUserWallet
 
