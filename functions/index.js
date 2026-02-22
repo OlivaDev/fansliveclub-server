@@ -5,6 +5,7 @@ const admin = require("firebase-admin");
 const { onDocumentCreated } = require("firebase-functions/firestore");
 const { updatePeriodGains } = require("./src/streamers");
 const { createUserWallet } = require("./src/wallets");
+const { subscribeToChannel, subscriptionsController } = require("./src/subscriptions");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -76,4 +77,7 @@ exports.mainNotificator = onDocumentCreated("notifications/{notification}", asyn
 exports.updatePeriodGains = updatePeriodGains
 //WALLETS///////////////////////////////////////////////////////////////////////
 exports.createUserWallet = createUserWallet
+//SUBSCRIPTIONS
+exports.subscribeToChannel = subscribeToChannel
+exports.subscriptionsController = subscriptionsController
 
