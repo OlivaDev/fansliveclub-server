@@ -24,6 +24,8 @@ const subscribeToChannel = onRequest(async (req, res) => {
                 error: err.toString(),
                 created: admin.firestore.Timestamp.now()
             })
+
+            res.send(JSON.stringify({success: false}))
         }
 
         return null
@@ -34,6 +36,7 @@ const subscriptionsController = onDocumentCreated("/users/{userId}/subscribers/{
     try {
         let userId = data.params.userId
         let subId = data.params.subId
+        let tier = data.data.data().tier
 
         await Promise.all([
             admin.firestore().collection("users").doc(userId).update({
@@ -42,6 +45,7 @@ const subscriptionsController = onDocumentCreated("/users/{userId}/subscribers/{
 
             admin.firestore().collection("users").doc(subId).collection("subscriptions").doc(userId).set({
                 user: userId,
+                tier,
                 created: admin.firestore.Timestamp.now()
             })
         ])
