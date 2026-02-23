@@ -35,7 +35,12 @@ const updatePeriodGains = onDocumentCreated("wallets/{walletId}/transactions/{tr
 
         await admin.firestore().collection("wallets").doc(transaction.toWallet).update({
             periodGains: FieldValue.increment(amount),
-            avaliable: FieldValue.increment(amount)
+            available: FieldValue.increment(amount)
+        })
+
+        await admin.firestore().collection("wallets").doc(transaction.fromWallet).update({
+            expense: FieldValue.increment(transaction.amount),
+            available: FieldValue.increment(-transaction.amount)
         })
 
         /*
