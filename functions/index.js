@@ -6,7 +6,7 @@ const { onDocumentCreated } = require("firebase-functions/firestore");
 const { updatePeriodGains } = require("./src/streamers");
 const { createUserWallet } = require("./src/wallets");
 const { subscribeToChannel, subscriptionsController } = require("./src/subscriptions");
-const { binancePayment } = require("./src/payments/binance");
+const { binancePayment, checkBinanceNetwork, createBinanceOrder } = require("./src/payments/binance");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -82,5 +82,6 @@ exports.createUserWallet = createUserWallet
 exports.subscribeToChannel = subscribeToChannel
 exports.subscriptionsController = subscriptionsController
 //PAYMENTS
-exports.binancePayment = binancePayment
+exports.checkBinanceNetwork = checkBinanceNetwork
+exports.createBinanceOrder = createBinanceOrder
 
