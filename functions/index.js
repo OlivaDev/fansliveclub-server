@@ -6,7 +6,8 @@ const { onDocumentCreated } = require("firebase-functions/firestore");
 const { updatePeriodGains } = require("./src/streamers");
 const { createUserWallet } = require("./src/wallets");
 const { subscribeToChannel, subscriptionsController } = require("./src/subscriptions");
-const { binancePayment, checkBinanceNetwork, createBinanceOrder } = require("./src/payments/binance");
+const { checkBinanceNetwork, createBinanceOrder } = require("./src/payments/binance");
+const { cleanupViewers, onViewverJoined, onLeaveStream, onViewverLeave } = require("./src/stream/stream");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -84,4 +85,9 @@ exports.subscriptionsController = subscriptionsController
 //PAYMENTS
 exports.checkBinanceNetwork = checkBinanceNetwork
 exports.createBinanceOrder = createBinanceOrder
+//STREAM
+exports.cleanupViewers = cleanupViewers
+exports.onViewverJoined = onViewverJoined
+exports.onViewverLeave = onViewverLeave
+exports.onLeaveStream = onLeaveStream
 
