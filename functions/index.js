@@ -8,7 +8,7 @@ const { createUserWallet } = require("./src/wallets");
 const { subscribeToChannel, subscriptionsController } = require("./src/subscriptions");
 const { checkBinanceNetwork, createBinanceOrder } = require("./src/payments/binance");
 const { cleanupViewers, onViewverJoined, onLeaveStream, onViewverLeave } = require("./src/stream/stream");
-const { getLiveKitToken } = require("./src/stream/livekit");
+const { getLiveKitToken, finishStream } = require("./src/stream/livekit");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -93,4 +93,5 @@ exports.onViewverLeave = onViewverLeave
 exports.onLeaveStream = onLeaveStream
 //STREAM LIVEKIT
 exports.getLiveKitToken = getLiveKitToken
+exports.finishStream = finishStream
 
