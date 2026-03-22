@@ -35,10 +35,16 @@ const updatePeriodGains = onDocumentCreated("wallets/{walletId}/transactions/{tr
                 let nextLevel = promises2[1].data()
                 let amount = (transaction.amount * currentLevel.percentage) / 100
 
-                await admin.firestore().collection("wallets").doc(transaction.toWallet).update({
-                    periodGains: FieldValue.increment(amount),
-                    available: FieldValue.increment(amount)
-                })
+                await Promise.all([
+                    admin.firestore().collection("wallets").doc(transaction.toWallet).update({
+                        periodGains: FieldValue.increment(amount),
+                        available: FieldValue.increment(amount)
+                    }),
+
+                    admin.firestore().collection("wallets").doc(transaction.toWallet).doc(transaction.id).update({
+                        gained: amount
+                    })
+                ])
 
                 /*
                 await admin.firestore().collection("wallets").doc(transaction.fromWallet).update({
@@ -87,7 +93,7 @@ const updatePeriodGains = onDocumentCreated("wallets/{walletId}/transactions/{tr
                     created: Timestamp.now()
                 })
             }
-        break;
+            break;
     }
 
     return null
