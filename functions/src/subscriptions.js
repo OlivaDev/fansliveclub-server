@@ -5,61 +5,39 @@ const cors = require("cors");
 const { onRequest } = require("firebase-functions/https");
 const corsHandler = cors({ origin: "*" })
 
-
-const subscribeToChannel = onRequest(async (req, res) => {
-    corsHandler(req, res, async () => {
-        let { userId, tierId, subId } = req.body
-
+const subscriptionConfirmed = onDocumentCreated("wallets/{walletId}/transactions/{transId}", async (data) => {
+    let transaction = data.data.data()
+    if (transaction.type === 2) {
         try {
             const subs = {
-                id: subId,
-                tier: tierId,
+                ...transaction.subscription,
                 created: admin.firestore.Timestamp.now()
             }
 
-            await admin.firestore().collection("users").doc(userId).collection("subscribers").doc(subs.id).set(subs)
-            res.send(JSON.stringify({ success: true }))
+            await Promise.all([
+                admin.firestore().collection("users").doc(subs.userId).collection("subscribers").doc(subs.id).set(subs),
+                admin.firestore().collection("users").doc(subs.userId).update({
+                    subscribers: FieldValue.increment(1)
+                }),
+
+                admin.firestore().collection("users").doc(subs.id).collection("subscriptions").doc(subs.userId).set({
+                    user: subs.userId,
+                    tier: subs.tier,
+                    created: admin.firestore.Timestamp.now()
+                })
+            ])
+
         } catch (err) {
-            await admin.firestore().collection("errors").add({
-                error: err.toString(),
-                created: admin.firestore.Timestamp.now()
+            admin.firestore().collection("subscriptions_error_tracking").add({
+                created: admin.firestore.Timestamp.now(),
+                error: err.toString()
             })
-
-            res.send(JSON.stringify({success: false}))
         }
-
-        return null
-    })
-})
-
-const subscriptionsController = onDocumentCreated("/users/{userId}/subscribers/{subId}", async (data) => {
-    try {
-        let userId = data.params.userId
-        let subId = data.params.subId
-        let tier = data.data.data().tier
-
-        await Promise.all([
-            admin.firestore().collection("users").doc(userId).update({
-                subscribers: FieldValue.increment(1)
-            }),
-
-            admin.firestore().collection("users").doc(subId).collection("subscriptions").doc(userId).set({
-                user: userId,
-                tier,
-                created: admin.firestore.Timestamp.now()
-            })
-        ])
-    } catch (err) {
-        await admin.firestore().collection("errors").add({
-            error: err.toString(),
-            created: admin.firestore.Timestamp.now()
-        })
     }
 
     return null
 })
 
 module.exports = {
-    subscribeToChannel,
-    subscriptionsController
+    subscriptionConfirmed
 }

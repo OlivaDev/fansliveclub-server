@@ -3,13 +3,13 @@
 const cors = require("cors");
 const admin = require("firebase-admin");
 const { onDocumentCreated } = require("firebase-functions/firestore");
-const { updatePeriodGains } = require("./src/streamers");
 const { createUserWallet } = require("./src/wallets");
-const { subscribeToChannel, subscriptionsController } = require("./src/subscriptions");
+const { subscriptionConfirmed } = require("./src/subscriptions");
 const { checkBinanceNetwork, createBinanceOrder } = require("./src/payments/binance");
 const { cleanupViewers, onViewverJoined, onLeaveStream, onViewverLeave } = require("./src/stream/stream");
 const { getLiveKitToken, finishStream } = require("./src/stream/livekit");
 const { makePayment } = require("./src/payments/payments");
+const { transactionsController } = require("./src/transactions");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -78,12 +78,11 @@ exports.mainNotificator = onDocumentCreated("notifications/{notification}", asyn
 //////////////////////////////////////////////////////////////////////
 
 //STREAMERS//////////////////////////////////////////////////////////////////////
-exports.updatePeriodGains = updatePeriodGains
+exports.transactionsController = transactionsController
 //WALLETS///////////////////////////////////////////////////////////////////////
 exports.createUserWallet = createUserWallet
 //SUBSCRIPTIONS
-exports.subscribeToChannel = subscribeToChannel
-exports.subscriptionsController = subscriptionsController
+exports.subscriptionConfirmed = subscriptionConfirmed
 //PAYMENTS
 exports.checkBinanceNetwork = checkBinanceNetwork
 exports.createBinanceOrder = createBinanceOrder
