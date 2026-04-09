@@ -1,9 +1,6 @@
 const { onDocumentCreated } = require("firebase-functions/firestore")
 const { FieldValue } = require("firebase-admin/firestore")
 const admin = require("firebase-admin");
-const cors = require("cors");
-const { onRequest } = require("firebase-functions/https");
-const corsHandler = cors({ origin: "*" })
 
 const subscriptionConfirmed = onDocumentCreated("wallets/{walletId}/transactions/{transId}", async (data) => {
     let transaction = data.data.data()
@@ -23,6 +20,7 @@ const subscriptionConfirmed = onDocumentCreated("wallets/{walletId}/transactions
                 admin.firestore().collection("users").doc(subs.id).collection("subscriptions").doc(subs.userId).set({
                     user: subs.userId,
                     tier: subs.tier,
+                    tierData: subs.tierData,
                     created: admin.firestore.Timestamp.now()
                 })
             ])

@@ -28,7 +28,7 @@ const makePayment = onRequest(async (req, res) => {
         }
 
 
-        //Aquí ya registramos el pago
+        //Aquí ya registramos el pago (esto se tiene que mover luego a los hooks de las pasarelas reales)
         try {
             await admin.firestore().collection("wallets").doc(transaction.toWallet).collection("transactions").doc(transaction.id).set(transaction)
             res.send({success: true})
