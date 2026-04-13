@@ -10,6 +10,7 @@ const { cleanupViewers, onViewverJoined, onLeaveStream, onViewverLeave } = requi
 const { getLiveKitToken, finishStream } = require("./src/stream/livekit");
 const { makePayment } = require("./src/payments/payments");
 const { transactionsController } = require("./src/transactions");
+const { requestService } = require("./src/services");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -97,4 +98,6 @@ exports.onLeaveStream = onLeaveStream
 //STREAM LIVEKIT
 exports.getLiveKitToken = getLiveKitToken
 exports.finishStream = finishStream
+//SERVICES
+exports.requestService = requestService
 
