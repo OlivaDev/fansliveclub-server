@@ -20,7 +20,14 @@ const requestService = onRequest(async (req, res) => {
         }
 
         try {
-            await admin.firestore().collection("services_requests").doc(request.id).set(request)
+            await Promise.all([
+                admin.firestore().collection("services_requests").doc(request.id).set(request),
+
+                admin.firestore().collection("users").doc(user).collection("updaters").doc("requests").set({
+                    updatedAt: admin.firestore.Timestamp.now()
+                }, { merge: true }),
+            ])
+            
             res.send({ success: true, message: "Request sended successfully" })
             return null
         } catch (err) {
