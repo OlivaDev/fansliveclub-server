@@ -70,19 +70,40 @@ const getServicesRequests = onRequest(async (req, res) => {
 const approveServiceRequest = onRequest(async (req, res) => {
     corsHandler(req, res, async () => {
         const { request } = req.body
+
         try {
+
+            const msg = {
+                id: crypto.randomUUID(),
+                creator: "system",
+                created: Timestamp.now(),
+                type: "system",
+                text: "Service chat: In case of fraud, please report it for verification."
+            }
+
+            const chat = {
+                id: crypto.randomUUID(),
+                users: [request.user, request.subscriber.id],
+                type: 1,
+                lastUpdate: Timestamp.now(),
+                lastMessage: msg
+            }
+
             await Promise.all([
                 admin.firestore().collection("services_requests").doc(request.id).update({
                     status: "approved"
                 }),
 
+                admin.firestore().collection("chats").doc(chat.id).set(chat),
+                admin.firestore().collection("chats").doc(chat.id).collection("messages").doc(msg.id).set(chat),
+
                 admin.firestore().collection("users").doc(request.user).collection("updaters").doc("requests").set({
                     updatedAt: admin.firestore.Timestamp.now()
-                }, {merge: true}),
+                }, { merge: true }),
 
                 admin.firestore().collection("users").doc(request.subscriber.id).collection("updaters").doc("requests").set({
                     updatedAt: admin.firestore.Timestamp.now()
-                }, {merge: true}),
+                }, { merge: true }),
             ])
 
             res.send({ success: true })
