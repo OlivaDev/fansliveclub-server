@@ -113,7 +113,7 @@ const approveServiceRequest = onRequest(async (req, res) => {
                 }, { merge: true }),
             ])
 
-            res.send({ success: true })
+            res.send({ success: true, chatId: chat.id })
             return null
         } catch (err) {
             res.send({ success: false, error: err.toString() })

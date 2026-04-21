@@ -40,12 +40,9 @@ const transactionsController = onDocumentCreated("wallets/{walletId}/transaction
                 await Promise.all([
                     admin.firestore().collection("wallets").doc(transaction.toWallet).update({
                         periodGains: FieldValue.increment(amount),
-                        available: FieldValue.increment(amount)
+                        available: FieldValue.increment(amount),
+                        gained: FieldValue.increment(amount)
                     }),
-
-                    admin.firestore().collection("wallets").doc(transaction.toWallet).doc(transaction.id).update({
-                        gained: amount
-                    })
                 ])
 
                 /*
