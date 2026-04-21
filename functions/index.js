@@ -11,7 +11,8 @@ const { getLiveKitToken, finishStream } = require("./src/stream/livekit");
 const { makePayment } = require("./src/payments/payments");
 const { transactionsController } = require("./src/transactions");
 const { requestService, getServicesRequests, approveServiceRequest } = require("./src/services");
-const { getUserChats } = require("./src/chats");
+const { getUserChats, chatCreated } = require("./src/chats");
+const { getUsersList } = require("./src/users");
 admin.initializeApp();
 const corsHandler = cors({ origin: "*" })
 
@@ -105,3 +106,6 @@ exports.getServicesRequests = getServicesRequests
 exports.approveServiceRequest = approveServiceRequest
 //CHATS
 exports.getUserChats = getUserChats
+exports.chatCreated = chatCreated
+//USERS
+exports.getUsersList = getUsersList

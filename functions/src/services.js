@@ -27,7 +27,7 @@ const requestService = onRequest(async (req, res) => {
                     updatedAt: admin.firestore.Timestamp.now()
                 }, { merge: true }),
             ])
-            
+
             res.send({ success: true, message: "Request sended successfully" })
             return null
         } catch (err) {
@@ -91,7 +91,7 @@ const approveServiceRequest = onRequest(async (req, res) => {
             const chat = {
                 id: crypto.randomUUID(),
                 users: [request.user, request.subscriber.id],
-                type: 1,
+                type: 2,
                 lastUpdate: Timestamp.now(),
                 lastMessage: msg
             }
