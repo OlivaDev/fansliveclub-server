@@ -93,7 +93,8 @@ const approveServiceRequest = onRequest(async (req, res) => {
                 users: [request.user, request.subscriber.id],
                 type: 2,
                 lastUpdate: Timestamp.now(),
-                lastMessage: msg
+                lastMessage: msg,
+                services: request.services
             }
 
             await Promise.all([
@@ -102,7 +103,7 @@ const approveServiceRequest = onRequest(async (req, res) => {
                 }),
 
                 admin.firestore().collection("chats").doc(chat.id).set(chat),
-                admin.firestore().collection("chats").doc(chat.id).collection("messages").doc(msg.id).set(chat),
+                admin.firestore().collection("chats").doc(chat.id).collection("messages").doc(msg.id).set(msg),
 
                 admin.firestore().collection("users").doc(request.user).collection("updaters").doc("requests").set({
                     updatedAt: admin.firestore.Timestamp.now()
