@@ -2,6 +2,9 @@
 
 const cors = require("cors");
 const admin = require("firebase-admin");
+admin.initializeApp();
+const corsHandler = cors({ origin: "*" })
+
 const { onDocumentCreated } = require("firebase-functions/firestore");
 const { createUserWallet } = require("./src/wallets");
 const { subscriptionConfirmed } = require("./src/subscriptions");
@@ -13,8 +16,8 @@ const { transactionsController } = require("./src/transactions");
 const { requestService, getServicesRequests, approveServiceRequest } = require("./src/services");
 const { getUserChats, chatCreated } = require("./src/chats");
 const { getUsersList } = require("./src/users");
-admin.initializeApp();
-const corsHandler = cors({ origin: "*" })
+const { analyzeUserVerification } = require("./src/AI/gemini/images");
+
 
 //NOTIFICADORES
 const sendNotification = async (message) => {
@@ -109,3 +112,5 @@ exports.getUserChats = getUserChats
 exports.chatCreated = chatCreated
 //USERS
 exports.getUsersList = getUsersList
+//IA
+exports.analyzeUserVerification = analyzeUserVerification
