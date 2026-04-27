@@ -23,7 +23,7 @@ Realiza un análisis exhaustivo y secuencial de ambas imágenes para responder a
 4. Determina si la persona tiene 18 años o más.
 
 ## Tarea C: Análisis de Integridad (Anti-Spoofing)
-1. Verifica si la Imagen 2 (ID) parece ser un documento físico real y no una foto de una pantalla o una fotocopia en blanco y negro.
+1. Verifica si la Imagen 2 (ID) parece ser un documento físico real y no una foto de una pantalla o una fotocopia en blanco y negro, tiene que ser un documento.
 
 # RESTRICCIONES DE SALIDA
 - NO proporciones ninguna explicación textual introductoria ni conclusiva.
@@ -40,13 +40,13 @@ Realiza un análisis exhaustivo y secuencial de ambas imágenes para responder a
   "age_verification": {
     "is_over_18": boolean, // true si es mayor o igual a 18 años, false si es menor.
     "extracted_dob": "string", // Formato AAAA-MM-DD o null si no se pudo leer.
-    "calculated_age": integer // Edad calculada o null si no se pudo calcular.
   },
   "document_integrity": {
     "is_physical_document": boolean, // true si parece un documento real, false si es sospechoso.
     "warnings": ["string"] // Lista de alertas (ej: "foto de pantalla detectada", "documento borroso").
   },
-  "final_decision": "string" // Opciones: "APPROVE", "REJECT", "RETRY_IMAGES"
+  "final_decision": "string" // Opciones: "HUMAN_REVIEW" (aprobada), "REJECT" (negada),
+  "explanation": "string" // explicarle al usuario la razón del resultado (inglés)
 }
 `
 

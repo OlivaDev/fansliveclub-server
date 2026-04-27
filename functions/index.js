@@ -15,7 +15,7 @@ const { makePayment } = require("./src/payments/payments");
 const { transactionsController } = require("./src/transactions");
 const { requestService, getServicesRequests, approveServiceRequest } = require("./src/services");
 const { getUserChats, chatCreated } = require("./src/chats");
-const { getUsersList } = require("./src/users");
+const { getUsersList, createUserAccount } = require("./src/users");
 const { analyzeUserVerification } = require("./src/AI/gemini/images");
 
 
@@ -112,5 +112,6 @@ exports.getUserChats = getUserChats
 exports.chatCreated = chatCreated
 //USERS
 exports.getUsersList = getUsersList
+exports.createUserAccount = createUserAccount
 //IA
 exports.analyzeUserVerification = analyzeUserVerification

@@ -45,28 +45,33 @@ const analyzeUserVerification = onDocumentCreated({
                 ]
             }]
         };
-
-        await snapshot.ref.update({ state: "image_analysis", status: "Analizando identidad..." });
-
+        
         const result = await model.generateContent(request);
         const analysisText = result.response.candidates[0].content.parts[0].text;
 
         const cleanJson = JSON.parse(analysisText.replace(/```json|```/g, ""));
 
-        return await snapshot.ref.set({
-            analysis: cleanJson,
-            status: "Completed",
-            state: "completed",
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        return Promise.all([
+            snapshot.ref.set({
+                status: cleanJson.final_decision,
+                explanation: cleanJson.explanation,
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true }),
+
+            snapshot.ref.collection("analysis").doc("result").set({
+                ...cleanJson,
+                updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true })
+        ])
+
 
     } catch (error) {
-        console.error("Error en KYC:", error);
-        return await admin.firestore().collection("kyc_error_tracking").add({
-            error: error.toString(),
-            created: Timestamp.now()
-        });
-    }
+    console.error("Error en KYC:", error);
+    return await admin.firestore().collection("kyc_error_tracking").add({
+        error: error.toString(),
+        created: Timestamp.now()
+    });
+}
 });
 
 module.exports = {
