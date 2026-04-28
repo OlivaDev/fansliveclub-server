@@ -3,6 +3,7 @@ const cors = require("cors");
 const corsHandler = cors({ origin: "*" })
 const { onRequest } = require("firebase-functions/https");
 const { requestSeparatedData } = require("./util");
+const { onDocumentDeleted } = require("firebase-functions/firestore");
 
 const usernameIsAvailable = async(username) => {
     const count = await admin.firestore().collection("users").where("user_id", "==", username.toLowerCase()).count().get()
@@ -54,6 +55,7 @@ const createUserAccount = onRequest(async (req, res) => {
                     ...finalData,
                     created: admin.firestore.Timestamp.now(),
                     user_id: data.username.toLowerCase(),
+                    type: data.type || 1,
                     welcomeMessageShowed: false,
                     streamerLevel: "84w5C5LfToEnPKcEPx7e",
                     nextStreamerLevel: "UQ7dj9RQVUPfq8lg6q0W",
@@ -61,9 +63,9 @@ const createUserAccount = onRequest(async (req, res) => {
                     periodEnd: admin.firestore.Timestamp.fromDate(periodEnd)
                 }),
 
-                admin.firestore().collection("users").doc(data.id).collection("secret").doc("secret").set({
-                    password: data.password,
-                })
+                data.password ? admin.firestore().collection("users").doc(data.id).collection("secret").doc("secret").set({
+                    password: data.password
+                }) : ""
             ])
 
             res.send({success: true})
@@ -80,7 +82,13 @@ const createUserAccount = onRequest(async (req, res) => {
     })
 })
 
+const onUserDeleted = onDocumentDeleted("users/{userId}", async(event) => {
+    const userId = event.params.userId
+    return await admin.auth().deleteUser(userId)
+})
+
 module.exports = {
     getUsersList,
-    createUserAccount
+    createUserAccount,
+    onUserDeleted
 }
